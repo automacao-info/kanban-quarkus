@@ -2,9 +2,14 @@ package org.seariver.kanbanboard.write.adapter.in;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.OAuthFlow;
+import org.eclipse.microprofile.openapi.annotations.security.OAuthFlows;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import org.seariver.kanbanboard.commom.exception.ResponseError;
@@ -15,6 +20,7 @@ import org.seariver.kanbanboard.write.domain.application.MoveBucketCommandHandle
 import org.seariver.kanbanboard.write.domain.application.UpdateBucketCommand;
 import org.seariver.kanbanboard.write.domain.application.UpdateBucketCommandHandler;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -37,6 +43,9 @@ import static javax.ws.rs.core.Response.Status.CREATED;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "bucket")
+@RolesAllowed("kanbanboard")
+@SecurityScheme(securitySchemeName = "kanbanboard-oauth", type = SecuritySchemeType.OAUTH2, flows = @OAuthFlows(password = @OAuthFlow(tokenUrl = "http://localhost:8180/auth/realms/kanbanboard/protocol/openid-connect/token")))
+@SecurityRequirement(name = "kanbanboard-oauth")
 public class WriteBucketRest {
 
     public static final String UUID_FORMAT = "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$";
